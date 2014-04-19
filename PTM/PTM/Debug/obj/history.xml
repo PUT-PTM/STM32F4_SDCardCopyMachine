@@ -1,50 +1,62 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <history>
-   <processor signature="arm-none-eabi-gcc 3.4.2 mingw32 -mcpu=cortex-m4 -mthumb -Wall -ffunction-sections -g -O0 -c -DSTM32F407VG -DSTM32F4XX -DUSE_STDPERIPH_DRIVER -D__ASSEMBLY__ -I..\..\..\..\..\Users\kuba\Downloads\F4_Fat_SD\F4_Fat_SD\FatFs_SD -I..\..\..\..\..\Users\kuba\Downloads\STM32_Navicane_Phase3.tar\STM32_Navicane_Phase3\STM32_Navicane_Phase3\Cane_04222011 -I..\..\..\..\..\Users\kuba\Downloads\F4_Fat_SD -I..\..\..\workspace\PTM\cmsis -I..\..\..\..\..\Users\kuba\Downloads\STM32_Navicane_Phase3.tar\STM32_Navicane_Phase3 -I..\..\..\workspace -I..\..\..\workspace\PTM\cmsis_boot -I..\..\..\..\..\Users\kuba\Downloads\STM32_Navicane_Phase3.tar\STM32_Navicane_Phase3\STM32_Navicane_Phase3 -I..\..\..\workspace\PTM\cmsis_lib -I..\..\..\..\..\Users\kuba\Downloads\F4_Fat_SD\F4_Fat_SD -I..\..\..\workspace\PTM\cmsis_lib\include -I..\..\..\workspace\PTM">
-      <target file="spi_sd.o" lastModified="1456c6781d1">
-         <source file="..\..\..\..\..\..\..\Users\kuba\Downloads\F4_Fat_SD\F4_Fat_SD\FatFs_SD\spi_sd.c" lastModified="1358bde4c40"/>
-      </target>
-      <target file="stm32f4xx_gpio.o" lastModified="1456c678257">
-         <source file="..\..\..\cmsis_lib\source\stm32f4xx_gpio.c" lastModified="1456a7f4fca"/>
-      </target>
-      <target file="stm32f4xx_dma.o" lastModified="1456c678333">
-         <source file="..\..\..\cmsis_lib\source\stm32f4xx_dma.c" lastModified="1456a7f6f31"/>
-      </target>
-      <target file="stm32f4xx_adc.o" lastModified="1456c678136">
-         <source file="..\..\..\cmsis_lib\source\stm32f4xx_adc.c" lastModified="1456a7f827a"/>
-      </target>
-      <target file="stm32f4xx_tim.o" lastModified="1456c6786a8">
-         <source file="..\..\..\cmsis_lib\source\stm32f4xx_tim.c" lastModified="1456a7f77cd"/>
-      </target>
-      <target file="system_stm32f4xx.o" lastModified="1456c6782b3">
-         <source file="..\..\..\cmsis_boot\system_stm32f4xx.c" lastModified="1456a82355f"/>
-      </target>
-      <target file="startup_stm32f4xx.o" lastModified="1456c677f3a">
-         <source file="..\..\..\cmsis_boot\startup\startup_stm32f4xx.c" lastModified="1456a7f451f"/>
-      </target>
-      <target file="stm32f4xx_exti.o" lastModified="1456c678551">
+   <processor signature="arm-none-eabi-gcc 3.4.2 mingw32 -mcpu=cortex-m4 -mthumb -Wall -ffunction-sections -g -O0 -c -DSTM32F407VG -DSTM32F4XX -DUSE_STDPERIPH_DRIVER -D__ASSEMBLY__ -I..\..\..\..\..\Users\kuba\Downloads\STM32_Navicane_Phase3.tar\STM32_Navicane_Phase3\STM32_Navicane_Phase3\Cane_04222011 -I..\..\..\..\..\Users\kuba\PTMProjectSDCards\PTM\cmsis_lib\include -I..\..\..\..\..\Users\kuba -I..\..\..\..\..\Users\kuba\Downloads\STM32_Navicane_Phase3.tar\STM32_Navicane_Phase3 -I..\..\..\..\..\Users\kuba\PTMProjectSDCards\PTM -I..\..\..\..\..\Users\kuba\Downloads\STM32_Navicane_Phase3.tar\STM32_Navicane_Phase3\STM32_Navicane_Phase3 -I..\..\..\..\..\Users\kuba\PTMProjectSDCards\PTM\cmsis_boot -I..\..\..\..\..\Users\kuba\PTMProjectSDCards -I..\..\..\..\..\Users\kuba\PTMProjectSDCards\PTM\cmsis -I..\..\..\..\..\Users\kuba\PTMProjectSDCards\PTM\cmsis_lib">
+      <target file="stm32f4xx_exti.o" lastModified="1457b37e6f3">
          <source file="..\..\..\cmsis_lib\source\stm32f4xx_exti.c" lastModified="1456a7f595c"/>
       </target>
-      <target file="main.o" lastModified="1456c677fc5">
-         <source file="..\..\..\main.c" lastModified="1456c666c06"/>
+      <target file="stm32f4xx_gpio.o" lastModified="1457b37e313">
+         <source file="..\..\..\cmsis_lib\source\stm32f4xx_gpio.c" lastModified="1456a7f4fca"/>
       </target>
-      <target file="stm32f4xx_dac.o" lastModified="1456c677ebb">
-         <source file="..\..\..\cmsis_lib\source\stm32f4xx_dac.c" lastModified="1456a7fae26"/>
-      </target>
-      <target file="ff.o" lastModified="1456c678464">
-         <source file="..\..\..\..\..\..\..\Users\kuba\Downloads\F4_Fat_SD\F4_Fat_SD\FatFs_SD\ff.c" lastModified="1456c43cc71"/>
-      </target>
-      <target file="stm32f4xx_spi.o" lastModified="1456c6784eb">
-         <source file="..\..\..\cmsis_lib\source\stm32f4xx_spi.c" lastModified="1456a7f6559"/>
-      </target>
-      <target file="stm32f4xx_sdio.o" lastModified="1456c677e38">
+      <target file="stm32f4xx_sdio.o" lastModified="1457b37df16">
          <source file="..\..\..\cmsis_lib\source\stm32f4xx_sdio.c" lastModified="1456a7fc84b"/>
       </target>
-      <target file="stm32f4xx_rcc.o" lastModified="1456c67807f">
+      <target file="startup_stm32f4xx.o" lastModified="1457b37dfc5">
+         <source file="..\..\..\cmsis_boot\startup\startup_stm32f4xx.c" lastModified="1456a7f451f"/>
+      </target>
+      <target file="stm32f4xx_tim.o" lastModified="1457b37e84e">
+         <source file="..\..\..\cmsis_lib\source\stm32f4xx_tim.c" lastModified="1456a7f77cd"/>
+      </target>
+      <target file="stm32f4xx_adc.o" lastModified="1457b37e1ba">
+         <source file="..\..\..\cmsis_lib\source\stm32f4xx_adc.c" lastModified="1456a7f827a"/>
+      </target>
+      <target file="printf.o" lastModified="1457b37e22f">
+         <source file="..\..\..\stdio\printf.c" lastModified="1457b2eaf25"/>
+      </target>
+      <target file="system_stm32f4xx.o" lastModified="1457b37e365">
+         <source file="..\..\..\cmsis_boot\system_stm32f4xx.c" lastModified="1456a82355f"/>
+      </target>
+      <target file="ccsbcs.o" lastModified="1457b37e465">
+         <source file="..\..\..\ccsbcs.c" lastModified="1457641599b"/>
+      </target>
+      <target file="misc.o" lastModified="1457b37e75c">
+         <source file="..\..\..\cmsis_lib\source\misc.c" lastModified="1456a7ff666"/>
+      </target>
+      <target file="stm32f4xx_dma.o" lastModified="1457b37e429">
+         <source file="..\..\..\cmsis_lib\source\stm32f4xx_dma.c" lastModified="1456a7f6f31"/>
+      </target>
+      <target file="stm32f4xx_spi.o" lastModified="1457b37e64a">
+         <source file="..\..\..\cmsis_lib\source\stm32f4xx_spi.c" lastModified="1456a7f6559"/>
+      </target>
+      <target file="stm32f4xx_rcc.o" lastModified="1457b37e10c">
          <source file="..\..\..\cmsis_lib\source\stm32f4xx_rcc.c" lastModified="1456a7f450b"/>
       </target>
-      <target file="misc.o" lastModified="1456c6785a6">
-         <source file="..\..\..\cmsis_lib\source\misc.c" lastModified="1456a7ff666"/>
+      <target file="stm32f4xx_dac.o" lastModified="1457b37df86">
+         <source file="..\..\..\cmsis_lib\source\stm32f4xx_dac.c" lastModified="1456a7fae26"/>
+      </target>
+      <target file="delay.o" lastModified="1457b37de94">
+         <source file="..\..\..\delay.c" lastModified="1457b37a1ae"/>
+      </target>
+      <target file="syscalls.o" lastModified="1457b37e3b1">
+         <source file="..\..\..\syscalls\syscalls.c" lastModified="1457b2e8de7"/>
+      </target>
+      <target file="spi_sd.o" lastModified="1457b37e2ab">
+         <source file="..\..\..\spi_sd.c" lastModified="1457b376c2a"/>
+      </target>
+      <target file="ff.o" lastModified="1457b37e5cd">
+         <source file="..\..\..\ff.c" lastModified="1457b2a3a7a"/>
+      </target>
+      <target file="main.o" lastModified="1457b37e072">
+         <source file="..\..\..\main.c" lastModified="1457b37d430"/>
       </target>
    </processor>
 </history>

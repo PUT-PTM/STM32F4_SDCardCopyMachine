@@ -3,10 +3,12 @@
 #include "stm32f4xx_rcc.h"
 #include "stm32f4xx_spi.h"
 #include "ff.h"
+#include "stdio.h"
 
 typedef unsigned char   BYTE;
 typedef unsigned long	DWORD;
 static volatile BYTE Timer1, Timer2;
+unsigned int d, f;
 
 /* Definitions for MMC/SDC command */
 #define CMD0    (0x40+0)    /* GO_IDLE_STATE */
@@ -24,6 +26,54 @@ static volatile BYTE Timer1, Timer2;
 #define CMD41    (0x40+41)    /* SEND_OP_COND (ACMD) */
 #define CMD55    (0x40+55)    /* APP_CMD */
 #define CMD58    (0x40+58)    /* READ_OCR */
+
+BYTE buffer[4096];
+
+FRESULT scan_files (
+    char* path        /* Start node to be scanned (also used as work area) */
+)
+{
+	d = 0;
+	f = 0;
+    FRESULT res;
+    FILINFO fno;
+    DIR dir;
+    int i;
+    char *fn;   /* This function is assuming non-Unicode cfg. */
+#if _USE_LFN
+    static char lfn[_MAX_LFN + 1];   /* Buffer to store the LFN */
+    fno.lfname = lfn;
+    fno.lfsize = sizeof lfn;
+#endif
+
+
+    res = f_opendir(&dir, path);                       /* Open the directory */
+    if (res == FR_OK) {
+        i = strlen(path);
+        for (;;) {
+            res = f_readdir(&dir, &fno);                   /* Read a directory item */
+            if (res != FR_OK || fno.fname[0] == 0) break;  /* Break on error or end of dir */
+            if (fno.fname[0] == '.') continue;             /* Ignore dot entry */
+#if _USE_LFN
+            fn = *fno.lfname ? fno.lfname : fno.fname;
+#else
+            fn = fno.fname;
+#endif
+            if (fno.fattrib & AM_DIR) {                    /* It is a directory */
+            	d++;
+                sprintf(&path[i], "/%s", fn);
+                res = scan_files(path);
+                if (res != FR_OK) break;
+                path[i] = 0;
+            } else {                                       /* It is a file. */
+            	f++;
+            }
+        }
+        f_closedir(&dir);
+    }
+
+    return res;
+}
 
 static
 BYTE rcvr_spi() 		// Odebranie bajtu z SD
@@ -97,18 +147,31 @@ BYTE send_cmd (
 int main(void)
 {
 
+	SystemInit();
 	int i;
 
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE); // zegar dla portu GPIO z którego wykorzystane zostan¹ piny do SPI (MOSI, MISO, SCK)
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE, ENABLE); // zegar dla portu GPIO z którego wykorzystany zostanie pin do SPI (CS)
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE); // zegar dla modu³u SPI2
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
 
 	GPIO_InitTypeDef GPIO_InitStructure;
+	GPIO_InitTypeDef GPIO_InitStructure2;
+
+	GPIO_InitStructure2.GPIO_Pin = GPIO_Pin_12 | GPIO_Pin_13| GPIO_Pin_14| GPIO_Pin_15;
+	GPIO_InitStructure2.GPIO_Mode = GPIO_Mode_OUT;
+	GPIO_InitStructure2.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure2.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_InitStructure2.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	GPIO_Init(GPIOD, &GPIO_InitStructure2);
+
+
 	//inicjalizacja pinów wykorzystywanych do SPI
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+
 	// SPI SCK, MISO, MOSI
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
@@ -140,6 +203,7 @@ int main(void)
 	SPI_Init(SPI2, &SPI_InitStructure);
 
 	SPI_Cmd(SPI2, ENABLE);
+
 	GPIO_ResetBits(GPIOE, GPIO_Pin_3);
 
 	for(i=0; i<10; i++) {
@@ -149,13 +213,29 @@ int main(void)
 	send_cmd(CMD0, 0);
 
 	FATFS fatfs;
-	FIL plik;
-	FRESULT fresult;
+	FIL fs, fd;
+	FRESULT fr;
+	UINT bw, br;
 
-	fresult = f_mount( 0, &fatfs );
-	fresult = f_open( &plik, L"plikTekstowyNowy.txt", FA_OPEN_ALWAYS | FA_WRITE );
-	fresult = f_close( &plik );
+    f_mount(0, &fatfs);
 
+    fr = f_open(&fs, "file.bin", FA_OPEN_EXISTING | FA_READ);
+    fr = f_open(&fd, "file4.bin", FA_CREATE_ALWAYS | FA_WRITE);
+
+    // Copy source to destination
+    for (;;) {
+        fr = f_read(&fs, buffer, sizeof buffer, &br);  // Read a chunk of source file
+        if (fr || br == 0) break; // error or eof
+        fr = f_write(&fd, buffer, br, &bw);            // Write it to the destination file
+        if (fr || bw < br) break; // error or disk full
+    }
+
+    // Close open files
+    f_close(&fs);
+    f_close(&fd);
+
+	GPIO_SetBits(GPIOD, GPIO_Pin_13);
 
 	while(1);
+
 }
