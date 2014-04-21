@@ -403,6 +403,7 @@ FRESULT f_close (FIL*);								/* Close an open file object */
 FRESULT f_opendir (DIR*, const TCHAR*);				/* Open an existing directory */
 FRESULT f_readdir (DIR*, FILINFO*);					/* Read a directory item */
 FRESULT f_stat (const TCHAR*, FILINFO*);			/* Get file status */
+FRESULT f_closedir (DIR*);
 
 #if !_FS_READONLY
 FRESULT f_write (FIL*, const void*, UINT, UINT*);	/* Write data to a file */

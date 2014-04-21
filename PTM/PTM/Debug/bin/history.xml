@@ -1,26 +1,28 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <history>
-   <processor signature="4.8.3 -mcpu=cortex-m4 -mthumb -g -nostartfiles -Map=PTM.map -O0 --gc-sections -LC:\CooCox\CoIDE2\configuration\ProgramData\PTM -TC:\CooCox\CoIDE2\configuration\ProgramData\PTM/arm-gcc-link.ld -g">
-      <target file="PTM.elf" lastModified="1457b37eaa4">
-         <source file="..\obj\delay.o" lastModified="1457b37de94"/>
-         <source file="..\obj\stm32f4xx_sdio.o" lastModified="1457b37df16"/>
-         <source file="..\obj\stm32f4xx_dac.o" lastModified="1457b37df86"/>
-         <source file="..\obj\startup_stm32f4xx.o" lastModified="1457b37dfc5"/>
-         <source file="..\obj\main.o" lastModified="1457b37e072"/>
-         <source file="..\obj\stm32f4xx_rcc.o" lastModified="1457b37e10c"/>
-         <source file="..\obj\stm32f4xx_adc.o" lastModified="1457b37e1ba"/>
-         <source file="..\obj\printf.o" lastModified="1457b37e22f"/>
-         <source file="..\obj\spi_sd.o" lastModified="1457b37e2ab"/>
-         <source file="..\obj\stm32f4xx_gpio.o" lastModified="1457b37e313"/>
-         <source file="..\obj\system_stm32f4xx.o" lastModified="1457b37e365"/>
-         <source file="..\obj\syscalls.o" lastModified="1457b37e3b1"/>
-         <source file="..\obj\stm32f4xx_dma.o" lastModified="1457b37e429"/>
-         <source file="..\obj\ccsbcs.o" lastModified="1457b37e465"/>
-         <source file="..\obj\ff.o" lastModified="1457b37e5cd"/>
-         <source file="..\obj\stm32f4xx_spi.o" lastModified="1457b37e64a"/>
-         <source file="..\obj\stm32f4xx_exti.o" lastModified="1457b37e6f3"/>
-         <source file="..\obj\misc.o" lastModified="1457b37e75c"/>
-         <source file="..\obj\stm32f4xx_tim.o" lastModified="1457b37e84e"/>
+   <processor signature="4.8.3 -mcpu=cortex-m4 -mthumb -g -nostartfiles -Map=PTM.map -O0 --gc-sections -lm -lgcc -lc -lrdimon -LC:\CooCox\CoIDE2\configuration\ProgramData\PTM -TC:\CooCox\CoIDE2\configuration\ProgramData\PTM/arm-gcc-link.ld -g">
+      <target file="PTM.elf" lastModified="14584469019">
+         <source file="..\obj\semihosting.o" lastModified="145844681c3"/>
+         <source file="..\obj\delay.o" lastModified="14584468218"/>
+         <source file="..\obj\stm32f4xx_sdio.o" lastModified="1458446828a"/>
+         <source file="..\obj\stm32f4xx_dac.o" lastModified="145844682f5"/>
+         <source file="..\obj\startup_stm32f4xx.o" lastModified="14584468332"/>
+         <source file="..\obj\main.o" lastModified="1458446849d"/>
+         <source file="..\obj\stm32f4xx_rcc.o" lastModified="14584468545"/>
+         <source file="..\obj\stm32f4xx_adc.o" lastModified="145844685ec"/>
+         <source file="..\obj\printf.o" lastModified="1458446866a"/>
+         <source file="..\obj\spi_sd.o" lastModified="145844686ee"/>
+         <source file="..\obj\stm32f4xx_gpio.o" lastModified="14584468758"/>
+         <source file="..\obj\sh_cmd.o" lastModified="14584468766"/>
+         <source file="..\obj\system_stm32f4xx.o" lastModified="145844687bc"/>
+         <source file="..\obj\syscalls.o" lastModified="1458446880b"/>
+         <source file="..\obj\stm32f4xx_dma.o" lastModified="14584468880"/>
+         <source file="..\obj\ccsbcs.o" lastModified="145844688c9"/>
+         <source file="..\obj\ff.o" lastModified="14584468a14"/>
+         <source file="..\obj\stm32f4xx_spi.o" lastModified="14584468a93"/>
+         <source file="..\obj\stm32f4xx_exti.o" lastModified="14584468aed"/>
+         <source file="..\obj\misc.o" lastModified="14584468b44"/>
+         <source file="..\obj\stm32f4xx_tim.o" lastModified="14584468c36"/>
       </target>
    </processor>
 </history>

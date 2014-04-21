@@ -6,6 +6,7 @@
  ********************************************************************************/
 #include <stdio.h>
 #include <stdarg.h>
+#include <semihosting.h>
 
 
 /**
@@ -20,7 +21,8 @@ void PrintChar(char c)
 	/* Send a char like: 
 	   while(Transfer not completed);
 	   Transmit a char;
-	*/	
+	*/
+	SH_SendChar(c);
 }
 
 /** Maximum string size allowed (in bytes). */

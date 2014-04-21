@@ -4,6 +4,8 @@
 #include "stm32f4xx_spi.h"
 #include "ff.h"
 #include "stdio.h"
+#include "cstring.h"
+#include "string.h"
 
 typedef unsigned char   BYTE;
 typedef unsigned long	DWORD;
@@ -27,25 +29,32 @@ unsigned int d, f;
 #define CMD55    (0x40+55)    /* APP_CMD */
 #define CMD58    (0x40+58)    /* READ_OCR */
 
-BYTE buffer[4096];
+BYTE buffer[4096];	// Bufor przechowuj¹cy kopiowane dane
 
+// Funkcja znajduj¹ca pliki w folderze przekazanym w parametrze
 FRESULT scan_files (
     char* path        /* Start node to be scanned (also used as work area) */
 )
 {
-	d = 0;
-	f = 0;
-    FRESULT res;
+	FIL fs, fd;
+	UINT bw, br;
+    FRESULT res, fr;
     FILINFO fno;
     DIR dir;
-    int i;
+    char * path_new;	// Œcie¿ka dla podfolderu
+    char * pathToFile;	// Œcie¿ka do pliku, który ma zostaæ skopiowany
+    char * pathToCopy;	// Œcie¿ka do miejsca gdzie ma zostaæ skopiowany plik
+    char * dirCopy = "Kopia";	// Folder do którego kopiowane s¹ pliki
+    char * private = "Private";
+    char * newDir;	// Œcie¿ka folderu, który ma zostaæ utworzony na drugim urz¹dzeniu
+    int i, j=0, n=0, m;
     char *fn;   /* This function is assuming non-Unicode cfg. */
+
 #if _USE_LFN
     static char lfn[_MAX_LFN + 1];   /* Buffer to store the LFN */
     fno.lfname = lfn;
     fno.lfsize = sizeof lfn;
 #endif
-
 
     res = f_opendir(&dir, path);                       /* Open the directory */
     if (res == FR_OK) {
@@ -53,22 +62,94 @@ FRESULT scan_files (
         for (;;) {
             res = f_readdir(&dir, &fno);                   /* Read a directory item */
             if (res != FR_OK || fno.fname[0] == 0) break;  /* Break on error or end of dir */
+
             if (fno.fname[0] == '.') continue;             /* Ignore dot entry */
+
 #if _USE_LFN
             fn = *fno.lfname ? fno.lfname : fno.fname;
 #else
             fn = fno.fname;
 #endif
+            printf("fn: %s\n", fn);
+
+            // Zapobiega wczytywaniu plików z folderu, do którego pliki s¹ kopiowane
+            if (strcmp(fn, dirCopy) == 0) continue;
+            // Zapobiega wczytywaniu plików z folderu Private
+            if (strcmp(fn, private) == 0) continue;
             if (fno.fattrib & AM_DIR) {                    /* It is a directory */
-            	d++;
-                sprintf(&path[i], "/%s", fn);
-                res = scan_files(path);
+            	GPIO_SetBits(GPIOD, GPIO_Pin_14);
+
+            	// Zapisanie scie¿ki znalezionego folderu do zmiennej newDir
+            	newDir = malloc(strlen(dirCopy)+strlen(path)+1+strlen(fn)+1);
+            	strcpy(newDir, dirCopy);
+            	strcat(newDir, path);
+            	strcat(newDir, "/");
+            	strcat(newDir, fn);
+
+            	fr = f_mkdir(newDir);
+            	free(newDir);
+
+            	// Zapisanie Œcie¿ki podfolderu do zmiennej path_new
+            	path_new = malloc(strlen(path)+strlen(fn)+1);
+            	strcpy(path_new, path);
+            	strcat(path_new, "/");
+            	strcat(path_new, fn);
+
+            	// Uruchomienie funkcji scan_files dla znalezionego folderu
+                res = scan_files(path_new);
+                free(path_new);
                 if (res != FR_OK) break;
-                path[i] = 0;
-            } else {                                       /* It is a file. */
+            } else {                                     /* It is a file. */
+            	GPIO_SetBits(GPIOD, GPIO_Pin_13);
+            	printf("%s/%s\n", path, fn);
+
+            	// Zapisanie Œcie¿ki znalezionego pliku do zmiennej pathToFile
+            	pathToFile = malloc(strlen(path)+1+strlen(fn)+1);
+            	strcpy(pathToFile, path);
+            	strcat(pathToFile, "/");
+            	strcat(pathToFile, fn);
+            	printf("pathToFile: %s\n", pathToFile);
+
+            	// Zapisanie scie¿ki gdzie ma zostaæ skopiowany plik do zmiennej pathToCopy
+            	pathToCopy = malloc(strlen(dirCopy)+strlen(path)+1+strlen(fn)+1);
+            	strcpy(pathToCopy, dirCopy);
+            	strcat(pathToCopy, path);
+            	strcat(pathToCopy, "/");
+            	strcat(pathToCopy, fn);
+            	printf("pathToCopy: %s\n", pathToCopy);
+
+            	// Otworzenie znalezionego pliku
+                fr = f_open(&fs, pathToFile, FA_OPEN_EXISTING | FA_READ);
+                // Utworzenie pliku na drugim urzadzeniu gdzie maja zostac skopiowane dane
+                fr = f_open(&fd, pathToCopy, FA_CREATE_ALWAYS | FA_WRITE);
+                free(pathToCopy);
+                free(pathToFile);
+
+                /* Kopiowanie danych
+                 * ------------------------------------------------------
+                 * Kopiowany powinien byæ tylko kawa³ek pliku. Plik err.file, pomimo tego, i¿
+                 * wa¿y wiêcej ni¿ jest w stanie pomiesciæ bufor, kopiowany jest poprawnie.
+                 * Natomiast podczas kopiowania pliku .txt, który jest wiêkszy ni¿ bufor,
+                 * program siê zawiesza.
+                 *
+                 * funkcja f_lseek()?
+                 * ------------------------------------------------------
+                 */
+                for (;;) {
+                    fr = f_read(&fs, buffer, sizeof buffer, &br);  // Read a chunk of source file
+                    if (fr || br == 0) break; // error or eof
+                    fr = f_write(&fd, buffer, br, &bw);            // Write it to the destination file
+                    if (fr || bw < br) break; // error or disk full
+                }
+
+                // Zamkniêcie plików
+                f_close(&fs);
+                f_close(&fd);
+
             	f++;
             }
         }
+        // Zamkniêcie folderu
         f_closedir(&dir);
     }
 
@@ -105,11 +186,11 @@ BYTE wait_ready (void)
 static
 void xmit_spi (BYTE Data)  // Wyslanie bajtu do SD
 {
-	BYTE nullll;
+	BYTE nought;
 	while( !( SPI2->SR & SPI_SR_TXE ));
 	SPI2->DR = Data;
 	while( !( SPI2->SR & SPI_SR_RXNE ));
-	nullll = SPI2->DR;
+	nought = SPI2->DR;
 
 }
 
@@ -202,16 +283,25 @@ int main(void)
 	SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
 	SPI_Init(SPI2, &SPI_InitStructure);
 
+	// Uruchomienie SPI2
 	SPI_Cmd(SPI2, ENABLE);
 
+	// Ustawienie pinu CS w stan niski
 	GPIO_ResetBits(GPIOE, GPIO_Pin_3);
 
+	// Wyslanie x10 danych 0xFF
 	for(i=0; i<10; i++) {
 		SPI_I2S_SendData(SPI2, 0xFF);
 		while(SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET);
 	}
+
+	// Wyslanie komendy CMD0 do karty SD
 	send_cmd(CMD0, 0);
 
+	// Utworzenie sytemu plików fat
+	FATFS fatfs;
+    f_mount(0, &fatfs);
+	/*
 	FATFS fatfs;
 	FIL fs, fd;
 	FRESULT fr;
@@ -220,7 +310,7 @@ int main(void)
     f_mount(0, &fatfs);
 
     fr = f_open(&fs, "file.bin", FA_OPEN_EXISTING | FA_READ);
-    fr = f_open(&fd, "file4.bin", FA_CREATE_ALWAYS | FA_WRITE);
+    fr = f_open(&fd, "/Nowy/file4.bin", FA_CREATE_ALWAYS | FA_WRITE);
 
     // Copy source to destination
     for (;;) {
@@ -233,8 +323,11 @@ int main(void)
     // Close open files
     f_close(&fs);
     f_close(&fd);
+	*/
 
-	GPIO_SetBits(GPIOD, GPIO_Pin_13);
+    scan_files("");
+
+	GPIO_SetBits(GPIOD, GPIO_Pin_12);
 
 	while(1);
 
